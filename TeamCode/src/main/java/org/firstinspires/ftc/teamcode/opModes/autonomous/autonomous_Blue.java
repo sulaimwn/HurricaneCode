@@ -208,24 +208,18 @@ public class autonomous_Blue extends LinearOpMode {
 
 
 
-                .splineToLinearHeading(
-                        new Pose2d(firstLinePose.position, firstLinePose.heading),
-                        firstLinePose.heading)
+                .splineToLinearHeading(new Pose2d(firstLinePose.position, firstLinePose.heading), firstLinePose.heading)
                 .lineToY(-55)
 
-                .splineToLinearHeading(new Pose2d(scorePose.position, scorePose.heading),
-                        scorePose.heading)
-                .splineToLinearHeading(
-                        new Pose2d(scorePose.position, scorePose.heading),
-                        scorePose.heading)
+                .splineToLinearHeading(new Pose2d(scorePose.position, scorePose.heading), scorePose.heading)
+                .splineToLinearHeading(new Pose2d(scorePose.position, scorePose.heading), scorePose.heading)
                 //CHANGE
                 .waitSeconds(5)
                 .splineToLinearHeading(new Pose2d(secondLinePose.position, secondLinePose.heading), secondLinePose.heading)
                 .lineToY(-55)
                 .lineToY(-40)
                 .splineToLinearHeading(
-                new Pose2d(scorePose.position, scorePose.heading),
-                scorePose.heading);
+                new Pose2d(scorePose.position, scorePose.heading), scorePose.heading);
 
 
 
@@ -271,7 +265,6 @@ public class autonomous_Blue extends LinearOpMode {
                                 //Thirdball Preloaded
                                 shooter.runTransferForSeconds(0.5, autonomous_Red.Shooter.TRANSFER_POWER),
 
-
                                 new SleepAction(2),
 
                                 //CHANGE TIME
@@ -290,7 +283,6 @@ public class autonomous_Blue extends LinearOpMode {
                                 //Thirdball FirstLIne
                                 shooter.runTransferForSeconds(0.5, autonomous_Red.Shooter.TRANSFER_POWER),
                                  new SleepAction(2),
-
 
                                 //intake SecondLine
 
