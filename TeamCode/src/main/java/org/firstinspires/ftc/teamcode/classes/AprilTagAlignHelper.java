@@ -36,7 +36,29 @@ public class AprilTagAlignHelper {
         limelight.pipelineSwitch(0);
         limelight.start();
     }
+    public double getRotationCorrection() {
+        LLResult result = limelight.getLatestResult();
 
+        if (result == null || !result.isValid()) {
+            telemetry.addData("AT-Status", "No Target");
+            return 0.0;
+        }
+
+        double tx = result.getTx();
+        telemetry.addData("tx", tx);
+
+        if (Math.abs(tx) <= TX_TOLERANCE) {
+            telemetry.addData("AT-Status", "Aligned");
+            return 0.0;
+        }
+
+        double power = kP * tx;
+
+        if (Math.abs(power) < MIN_POWER)
+            power = Math.copySign(MIN_POWER, power);
+
+        return Math.max(-1.0, Math.min(1.0, power));
+    }
     public void alignToAprilTag(boolean isAligning) {
         LLResult llResult = limelight.getLatestResult();
 

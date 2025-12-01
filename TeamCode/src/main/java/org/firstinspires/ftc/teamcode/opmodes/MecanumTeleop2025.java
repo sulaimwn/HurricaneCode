@@ -35,7 +35,7 @@ public class MecanumTeleop2025 extends OpMode {
 
     private boolean lastButtonState = false;
     public static double openPos = 0.6, closePos = 0.76;
-    double intakePower = 0.0, transferPower = 0.0;
+    double intakePower = 0.0, transferPower = 0.0, rx;
 
     private boolean lastGateState = false;
     private boolean servoToggled = false;
@@ -67,6 +67,7 @@ public class MecanumTeleop2025 extends OpMode {
 
         // create objects
         aprilTagAlign = new AprilTagAlignHelper(hardwareMap,telemetry);
+
 //        FlywheelPID = new Flywheel(hardwareMap, telemetry);
 
         telemetry.update();
@@ -97,7 +98,6 @@ public class MecanumTeleop2025 extends OpMode {
 //        else{
 //            gateLabel = "open";;
 //        }
-
 
         //boolean buttonPressed = gamepad2.a;
         //if (buttonPressed && !lastButtonState) flywheelOn = !flywheelOn;
@@ -148,8 +148,12 @@ public class MecanumTeleop2025 extends OpMode {
         lastGateState = currentButtonState;
 
         // if gamepad1.a is held returns true, if not it returns false
-        aprilTagAlign.alignToAprilTag(gamepad1.a);
 
+        if (gamepad1.a) {
+            rx = aprilTagAlign.getRotationCorrection();
+        } else {
+            rx = gamepad1.right_stick_x;
+        }
         // hold x to activate flywheel
         //FlywheelPID.update(gamepad2.x);
 
@@ -158,7 +162,6 @@ public class MecanumTeleop2025 extends OpMode {
 
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
 
 
         // Denominator is the largest motor power (absolute value) or 1
