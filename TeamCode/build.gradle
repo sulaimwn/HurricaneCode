@@ -21,6 +21,18 @@ buildscript {
     }
 }
 
+
+configurations.configureEach {
+    resolutionStrategy {
+        force 'androidx.core:core:1.9.0'
+        force 'androidx.annotation:annotation:1.6.0'
+        force 'com.google.android.material:material:1.8.0'
+        force 'androidx.appcompat:appcompat:1.6.1'
+        force 'androidx.lifecycle:lifecycle-common:2.6.1'
+        force 'androidx.core:core-ktx:1.9.0'
+    }
+}
+
 // Include common definitions from above
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
@@ -35,16 +47,21 @@ android {
 }
 
 repositories {
-    maven {
-        url = "https://repo.dairy.foundation/releases"
-        url = 'https://maven.brott.dev/'
-    }
+    mavenCentral()
+    maven { url = "https://jitpack.io" }
+    maven { url = "https://repo.dairy.foundation/releases" }
+    maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
     // Core modules
     implementation project(':FtcRobotController')
-    implementation("com.acmerobotics.slothboard:dashboard:0.2.4+0.4.17")
+    //implementation("com.acmerobotics.slothboard:dashboard:0.2.4+0.4.17")
+
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.15'
+
+    implementation 'com.github.FTCLib:FTCLib:2.0.0'
+
 
     // Dashboard (used in multiple branches)
 
