@@ -43,7 +43,6 @@ public class Flywheel implements Subsystem {
     public final Command flywheel1500RPM = new RunToVelocity(controller, 500.0).requires(this).named("Flywheel1500aRPM");
     public final Command flywheel2000RPM = new RunToVelocity(controller, 2000).requires(this).named("Flywheel2000RPM");
     public final Command flywheel2500RPM = new RunToVelocity(controller, 2500).requires(this).named("Flywheel2500RPM");
-
     public final Command highPower = new RunToVelocity(controller, 2000.0).requires(this).named("FlywheelOn");
     @Override
     // runs every loop
