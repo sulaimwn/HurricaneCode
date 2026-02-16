@@ -263,7 +263,7 @@ public class autonomous_Red extends LinearOpMode {
                                 //Second Ball Preloaded
                                 shooter.runIntakeForSeconds(0.5, autonomous_Red.Shooter.INTAKE_POWER),
                                 shooter.runTransferForSeconds(1, autonomous_Red.Shooter.TRANSFER_POWER),
-                                shooter.runIntakeForSeconds(0.25, autonomous_Red.Shooter.INTAKE_POWER),
+                                shooter.runIntakeForSeconds(0.5, autonomous_Red.Shooter.INTAKE_POWER),
 
                                 //Thirdball Preloaded
                                 shooter.runTransferForSeconds(0.5, autonomous_Red.Shooter.TRANSFER_POWER),
