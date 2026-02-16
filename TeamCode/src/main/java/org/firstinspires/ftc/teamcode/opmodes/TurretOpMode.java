@@ -1,0 +1,59 @@
+package org.firstinspires.ftc.teamcode.opmodes;
+
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.classes.TurretMechanism;
+
+@TeleOp(name="Tune Turret PD")
+public class TurretOpMode extends OpMode {
+
+    private TurretMechanism turret = new TurretMechanism();
+    private Limelight3A limelight;
+
+    double[] stepSizes = {0.1, 0.01, 0.001, 0.0001, 0.00001};
+    int stepIndex = 2;
+
+    @Override
+    public void init() {
+        turret.init(hardwareMap, telemetry);
+
+    }
+
+    @Override
+    public void start() {
+        turret.resetTimer();
+    }
+
+    @Override
+    public void loop() {
+        // Adjust precision with 'B'
+        if (gamepad1.b) {
+            // In a real OpMode, we'd use a debounce, but keeping it simple for now
+            stepIndex = (stepIndex + 1) % stepSizes.length;
+        }
+
+        // D-pad left/right adjusts the P gain
+        if (gamepad1.dpad_left) {
+            turret.setP(turret.getKP() - stepSizes[stepIndex]);
+        }
+        if (gamepad1.dpad_right) {
+            turret.setP(turret.getKP() + stepSizes[stepIndex]);
+        }
+
+        // D-pad up/down adjusts the D gain
+        if (gamepad1.dpad_up) {
+            turret.setD(turret.getKD() + stepSizes[stepIndex]);
+        }
+        if (gamepad1.dpad_down) {
+            turret.setD(turret.getKD() - stepSizes[stepIndex]);
+        }
+
+        // start it up boi
+        turret.update(true);
+        telemetry.addData("P Gain", turret.getKP());
+        telemetry.addData("D Gain", turret.getKD());
+        telemetry.addData("Step Size", stepSizes[stepIndex]);
+        telemetry.update();
+    }
+}
