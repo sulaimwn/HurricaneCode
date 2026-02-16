@@ -15,9 +15,6 @@ public class TurretMechanism {
     private DcMotorEx turret;
     private Limelight3A limelight;
 
-    // =========================
-    // PD CONSTANTS (Tune These)
-    // =========================
     private double kP = 0.0001;
     private double kD = 0.0001;
 
@@ -29,18 +26,11 @@ public class TurretMechanism {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    // =========================
-    // ENCODER SOFT LIMITS
-    // =========================
-    // 1154 ticks per full turret rotation
-    // Half rotation (180°) ≈ 577 ticks
-    // Using ±600 for safety
+
     private final int LEFT_LIMIT = -600;
     private final int RIGHT_LIMIT = 600;
 
-    // =========================
-    // INIT
-    // =========================
+
     public void init(HardwareMap hwMap, Telemetry telemetry) {
 
         turret = hwMap.get(DcMotorEx.class, "turret");

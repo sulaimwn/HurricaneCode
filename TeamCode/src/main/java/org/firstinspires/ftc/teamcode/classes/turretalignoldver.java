@@ -14,22 +14,17 @@ public class turretalignoldver {
     private DcMotorEx turretMotor;
     private Telemetry telemetry;
 
-    // --- MECHANICAL MATH ---
-    // Motor is 384.5 ticks per rev.
-    // Gear ratio is 210:70 (which is 3:1).
-    // Total ticks for one turret rotation = 384.5 * 3 = 1153.5.
-    // Ticks per degree = 1153.5 / 360 = 3.204.
+
     private static final double TICKS_PER_DEGREE = 3.204;
 
-    // Set these by moving the turret by hand and checking telemetry!
     private static final int LEFT_LIMIT = -1000;
     private static final int RIGHT_LIMIT = 1000;
 
     // --- TUNING ---
-    private static final double KP = 0.035;      // How "aggressive" the tracking is
-    private static final double TOLERANCE = 1.0; // Stop if within 1 degree
-    private static final double MAX_POWER = 0.4; // Don't go faster than 40% speed
-    private static final double SEARCH_POWER = 0.2; // Speed while looking for target
+    private static final double KP = 0.035;
+    private static final double TOLERANCE = 1.0;
+    private static final double MAX_POWER = 0.4;
+    private static final double SEARCH_POWER = 0.2;
 
     private boolean searchingRight = true;
 
@@ -70,7 +65,6 @@ public class turretalignoldver {
     private void trackTarget(double tx) {
         int currentPos = turretMotor.getCurrentPosition();
 
-        // P-LOOP: Power = Error (tx) times our Tuning Constant (KP)
         double power = tx * KP;
 
         // If we are close enough, just stop
@@ -78,16 +72,13 @@ public class turretalignoldver {
             power = 0;
         }
 
-        // SAFETY: If we are at the left limit and trying to go further left, stop.
         if (currentPos <= LEFT_LIMIT && power < 0) {
             power = 0;
         }
-        // SAFETY: If we are at the right limit and trying to go further right, stop.
         if (currentPos >= RIGHT_LIMIT && power > 0) {
             power = 0;
         }
 
-        // Clamp power so it doesn't exceed our MAX_POWER
         turretMotor.setPower(Range.clip(power, -MAX_POWER, MAX_POWER));
         telemetry.addData("Status", "Tracking Target");
     }
@@ -95,17 +86,14 @@ public class turretalignoldver {
     private void searchForTarget() {
         int currentPos = turretMotor.getCurrentPosition();
 
-        // If we hit the far right, start going left
         if (currentPos >= RIGHT_LIMIT) {
             searchingRight = false;
         }
 
-        // If we hit the far left, start going right
         if (currentPos <= LEFT_LIMIT) {
             searchingRight = true;
         }
 
-        // Decide power based on our direction boolean
         double power;
         if (searchingRight == true) {
             power = SEARCH_POWER;
