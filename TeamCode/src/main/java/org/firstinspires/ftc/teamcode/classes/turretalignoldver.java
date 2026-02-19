@@ -28,7 +28,7 @@ public class turretalignoldver {
 
     private boolean searchingRight = true;
 
-    public turretalignoldver(HardwareMap hardwareMap, Telemetry telemetry) {
+    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");

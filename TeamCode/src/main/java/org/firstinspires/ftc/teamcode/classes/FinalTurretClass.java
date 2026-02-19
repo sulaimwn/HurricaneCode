@@ -7,75 +7,63 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class TurretMechanism {
+public class FinalTurretClass {
 
     private DcMotorEx turret;
     private Limelight3A limelight;
 
-
-    // remember to tune all of this :)
-    private double kP = 0.0001;
-    private double kD = 0.0001;
+    private double kP = 0.01;
+    private double kD = 0.001;
+    private double kF = 0.0;
 
     private double lastError = 0;
-    private double angleTolerance = 1;
-    private final double MAX_POWER = 1.0;
+    private double filteredError = 0;
+    private double alpha = 0.2;
 
-    private double power = 0;
+    private double angleTolerance = 0.2;
+    private final double MAX_POWER = 1.0;
+    private final double MIN_POWER = 0.05;
 
     private final ElapsedTime timer = new ElapsedTime();
 
-
+    // Encoder limits
     private final int LEFT_LIMIT = -600;
     private final int RIGHT_LIMIT = 600;
-
 
     public void init(HardwareMap hwMap, Telemetry telemetry) {
 
         turret = hwMap.get(DcMotorEx.class, "turret");
 
-
-        // Reset encoder
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         limelight = hwMap.get(Limelight3A.class, "limelight");
-        telemetry.addData("Version 1.0", "Turret Rotater!");
         limelight.pipelineSwitch(0);
         limelight.start();
 
-
+        telemetry.addLine("Turret Mechanism Initialized");
         timer.reset();
     }
 
-    public void setP(double newKP) {
-        kP = newKP;
-    }
 
-    public double getKP() {
-        return kP;
-    }
+    public void setP(double newKP) { kP = newKP; }
+    public void setD(double newKD) { kD = newKD; }
+    public void setF(double newKF) { kF = newKF; }
 
-    public void setD(double newKD) {
-        kD = newKD;
-    }
-
-    public double getKD() {
-        return kD;
-    }
+    public double getKP() { return kP; }
+    public double getKD() { return kD; }
+    public double getKF() { return kF; }
 
     public void resetTimer() {
         timer.reset();
     }
 
-    public void update(boolean isAligning) {
 
-        // If not aligning, stop turret
+    public void update(boolean isAligning, double robotAngularVelocity) {
+
         if (!isAligning) {
             turret.setPower(0);
             lastError = 0;
@@ -88,32 +76,40 @@ public class TurretMechanism {
         double deltaTime = timer.seconds();
         timer.reset();
 
-        // If no valid AprilTag detected
+        if (deltaTime < 0.001) {
+            deltaTime = 0.001;
+        }
+
         if (llResult == null || !llResult.isValid()) {
             turret.setPower(0);
             lastError = 0;
             return;
         }
 
-        double error = llResult.getTx(); // Horizontal offset (degrees)
 
-        // If within tolerance, stop
+        double rawError = llResult.getTx();
+        filteredError = alpha * rawError + (1 - alpha) * filteredError;
+        double error = filteredError;
+
         if (Math.abs(error) < angleTolerance) {
             turret.setPower(0);
             lastError = error;
             return;
         }
 
-        // Proportional term
         double pTerm = error * kP;
+        double dTerm = ((error - lastError) / deltaTime) * kD;
 
-        // Derivative term
-        double dTerm = 0;
-        if (deltaTime > 0) {
-            dTerm = ((error - lastError) / deltaTime) * kD;
+        double fTerm = -robotAngularVelocity * kF;
+
+        double power = pTerm + dTerm + fTerm;
+
+        if (Math.abs(power) > 0.001) {
+            power += Math.signum(power) * MIN_POWER;
         }
 
-        power = Range.clip(pTerm + dTerm, -MAX_POWER, MAX_POWER);
+        power = Range.clip(power, -MAX_POWER, MAX_POWER);
+
 
         int position = turret.getCurrentPosition();
 
