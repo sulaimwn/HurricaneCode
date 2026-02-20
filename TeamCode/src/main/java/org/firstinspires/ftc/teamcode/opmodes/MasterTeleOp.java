@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -18,10 +19,17 @@ import org.firstinspires.ftc.teamcode.classes.TurretMechanism;
 
 @TeleOp(name="MasterTeleOp")
 public class MasterTeleOp extends OpMode {
-    
+
+    boolean gateOpen = false;
+    boolean lastX = false;
+
+    double gateClosedPos = 0.28;
+    double gateOpenPos = 0.5;
 
     DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, flywheel1, flywheel2, intake;
     private FinalTurretClass turret = new FinalTurretClass();
+    private Servo gate;
+
     public static double targetVelocity, velocity;
 
     private IMU imu;
@@ -30,16 +38,18 @@ public class MasterTeleOp extends OpMode {
     boolean closeOn = false, farOn = false;
     boolean lastA = false, lastB = false;
     double farVel = 2000, closeVel = 1500;
+
     @Override
     public void init() {
+        gate.setPosition(gateClosedPos);
         turret.init(hardwareMap, telemetry);
         initHardware();
 
         imu = hardwareMap.get(IMU.class, "imu");
 
         RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP
         );
 
         imu.initialize(new IMU.Parameters(RevOrientation));
@@ -57,6 +67,18 @@ public class MasterTeleOp extends OpMode {
     @Override
     public void loop() {
 
+        // X toggles gate
+        if (gamepad1.x && !lastX) {
+            gateOpen = !gateOpen;
+        }
+        lastX = gamepad1.x;
+
+// Set servo position
+        if (gateOpen) {
+            gate.setPosition(gateOpenPos);
+        } else {
+            gate.setPosition(gateClosedPos);
+        }
 
         double robotTurnRateDegPerSec = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -134,6 +156,9 @@ public class MasterTeleOp extends OpMode {
         backRightMotor.setPower(backRightPower);
     }
     private void initHardware() {
+
+        gate = hardwareMap.get(Servo.class, "Gate");
+
 
 
         // Drivetrain
