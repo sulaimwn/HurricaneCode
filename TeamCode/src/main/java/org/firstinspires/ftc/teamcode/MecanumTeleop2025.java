@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -12,20 +12,21 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.classes.AprilTagAlignHelper;
-import org.firstinspires.ftc.teamcode.classes.Flywheel;
-import org.firstinspires.ftc.teamcode.classes.transferGate;
+import org.firstinspires.ftc.teamcode.servoMotor;
+import org.firstinspires.ftc.teamcode.Flywheel;
 @Config
 @TeleOp(name = "TeleOp")
 
 public class MecanumTeleop2025 extends OpMode {
 
     private DcMotorEx flywheelMotor, flywheelMotor2;
+    private Servo gate;
     public static double kP = 0.02;       // proportional gain
     public static double kF = 0.00035;    // feedforward gain
     public static double maxTargetTPS = 1500; // target speed in ticks/sec
     private static final double OUTPUT_MAX = 1.0;
 
+    public static double openPos = 0.6, closePos = 0.76;
 
     private boolean lastButtonState = false;
 
@@ -40,7 +41,7 @@ public class MecanumTeleop2025 extends OpMode {
 
         flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheelMotor");
         flywheelMotor2 = hardwareMap.get(DcMotorEx.class, "flywheelMotor2");  // SECOND ADDED
-
+        gate = hardwareMap.get(Servo.class, "gate");
 
 
 
@@ -81,6 +82,11 @@ public class MecanumTeleop2025 extends OpMode {
 
 
 
+        if (gamepad1.a) {
+            gate.setPosition(openPos);
+        } else {
+            gate.setPosition(closePos);
+        }
 
 
     }
