@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,8 +13,9 @@ import org.firstinspires.ftc.teamcode.classes.TurretMechanism;
 @TeleOp(name="Teleop")
 public class teleop extends OpMode {
 
-    DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, flywheel1, flywheel2, intake;
+    DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, rightFlywheel, leftFlywheel, intake;
     private TurretMechanism turret = new TurretMechanism();
+
     public static double targetVelocity, velocity;
 
     public static double P,kV,kS;
@@ -23,6 +26,8 @@ public class teleop extends OpMode {
     @Override
     public void init() {
         turret.init(hardwareMap, telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         initHardware();
     }
 
@@ -61,8 +66,8 @@ public class teleop extends OpMode {
                    updateFlywheel(targetVelocity);
              } else {
                       // OFF = hard off
-                   flywheel1.setPower(0);
-                    flywheel2.setPower(0);
+                   rightFlywheel.setPower(0);
+                    leftFlywheel.setPower(0);
                 }
 
 
@@ -109,11 +114,11 @@ public class teleop extends OpMode {
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Flywheel
-        flywheel1 = hardwareMap.get(DcMotorEx.class, "flywheel1");
-        flywheel2 = hardwareMap.get(DcMotorEx.class, "flywheel2");
+        rightFlywheel = hardwareMap.get(DcMotorEx.class, "flywheel1");
+        leftFlywheel = hardwareMap.get(DcMotorEx.class, "flywheel2");
 
         // Typical mirrored flywheel setup
-        flywheel2.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
 //        flywheel1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 //        flywheel2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
@@ -132,7 +137,7 @@ public class teleop extends OpMode {
     private void updateFlywheel(double targetVel) {
 
         // Single encoder
-        velocity = flywheel1.getVelocity();
+        velocity = rightFlywheel.getVelocity();
 
         double error = targetVel - velocity;
         double feedback = error * P;
@@ -144,8 +149,8 @@ public class teleop extends OpMode {
 
         double power = feedback + feedforward;
 
-        flywheel1.setPower(power);
-        flywheel2.setPower(power);
+        rightFlywheel.setPower(power);
+        leftFlywheel.setPower(power);
 
     }
 }
