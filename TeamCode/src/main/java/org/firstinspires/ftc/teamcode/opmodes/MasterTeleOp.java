@@ -26,7 +26,6 @@ public class MasterTeleOp extends OpMode {
     private IMU imu;
     public static double P,kV,kS;
     private Limelight3A limelight;
-
     boolean closeOn = false, farOn = false;
     boolean lastA = false, lastB = false;
     double farVel = 2000, closeVel = 1500;
@@ -175,7 +174,7 @@ public class MasterTeleOp extends OpMode {
     private void updateFlywheel(double targetVel) {
         // Single encoder
         velocity = flywheel1.getVelocity();
-        
+
         double error = targetVel - velocity;
         double feedback = error * P;
 
