@@ -23,16 +23,24 @@ public class MecanumTeleop2025 extends OpMode {
     private Servo gate;
     public static double kP = 0.02;       // proportional gain
     public static double kF = 0.00035;    // feedforward gain
-    public static double maxTargetTPS = 1500; // target speed in ticks/sec
+    //public static double maxTargetTPS = 1500; // target speed in ticks/sec
+    // LOW / HIGH target speeds
+    public static double lowTargetTPS  = 800;
+    public static double highTargetTPS = 1500;
     private static final double OUTPUT_MAX = 1.0;
 
     public static double openPos = 0.6, closePos = 0.76;
 
-    private boolean lastButtonState = false;
+    private boolean lastAState = false;
+    private boolean lastBState = false;
 
 
+    //private boolean flywheelOn = false;  dont need i think
 
-    private boolean flywheelOn = false;
+
+    private enum FlywheelState { OFF, LOW, HIGH };
+    private FlywheelState flywheelState = FlywheelState.OFF;
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -55,32 +63,62 @@ public class MecanumTeleop2025 extends OpMode {
 
     //boolean currentPress = gamepad1.B;
     public void loop() {
-        boolean buttonPressed = gamepad2.a;
-        if (buttonPressed && !lastButtonState) flywheelOn = !flywheelOn;
-        lastButtonState = buttonPressed;
-        double targetTPS = flywheelOn ? maxTargetTPS : 0.0;
+        boolean currentA = gamepad2.a;
+        boolean currentB = gamepad2.b;
 
-        // Use motor.getVelocity() for measured speed
+        if (currentA && !lastAState) {
+
+            if (flywheelState == FlywheelState.LOW) {
+                flywheelState = FlywheelState.OFF;
+            } else {
+                flywheelState = FlywheelState.LOW;
+            }
+        }
+
+        if (currentB && !lastBState) {
+
+            if (flywheelState == FlywheelState.HIGH) {
+                flywheelState = FlywheelState.OFF;
+            } else {
+                flywheelState = FlywheelState.HIGH;
+            }
+        }
+
+        lastAState = currentA;
+        lastBState = currentB;
+
+
+
+        double targetTPS;
+        if (flywheelState == FlywheelState.LOW) {
+            targetTPS = lowTargetTPS;
+        } else if (flywheelState == FlywheelState.HIGH) {
+            targetTPS = highTargetTPS;
+        } else {
+            targetTPS = 0.0;
+        }
+
+
         double measuredTPS = flywheelMotor.getVelocity(); // ticks/sec
         double power = kF * targetTPS + kP * (targetTPS - measuredTPS);
-        power = Math.max(0, Math.min(OUTPUT_MAX, power));
+        power = Math.max(0, Math.min(OUTPUT_MAX, power)); // clamp to 0–1
         flywheelMotor.setPower(power);
 
-        //MOTOR 2 PID
         double measuredTPS2 = flywheelMotor2.getVelocity(); // ticks/sec
         double power2 = kF * targetTPS + kP * (targetTPS - measuredTPS2);
-        power2 = Math.max(0, Math.min(OUTPUT_MAX, power2));
+        power2 = Math.max(0, Math.min(OUTPUT_MAX, power2)); // clamp to 0–1
         flywheelMotor2.setPower(power2);
 
-        // Telemetry
+
+        telemetry.addData("Flywheel State", flywheelState);
         telemetry.addData("Target TPS", targetTPS);
+        telemetry.addData("Low Speed Target", lowTargetTPS);
+        telemetry.addData("High Speed Target", highTargetTPS);
         telemetry.addData("Motor 1 TPS", measuredTPS);
         telemetry.addData("Motor 1 Power", power);
         telemetry.addData("Motor 2 TPS", measuredTPS2);
         telemetry.addData("Motor 2 Power", power2);
         telemetry.addData("TPS Difference", Math.abs(measuredTPS - measuredTPS2));
-
-
 
         if (gamepad1.a) {
             gate.setPosition(openPos);
