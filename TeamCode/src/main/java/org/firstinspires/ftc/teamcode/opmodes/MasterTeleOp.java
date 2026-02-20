@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.classes.TurretMechanism;
 
 @TeleOp(name="MasterTeleOp")
 public class MasterTeleOp extends OpMode {
-
+    
 
     DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, flywheel1, flywheel2, intake;
     private FinalTurretClass turret = new FinalTurretClass();
