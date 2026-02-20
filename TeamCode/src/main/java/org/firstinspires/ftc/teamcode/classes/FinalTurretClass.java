@@ -42,6 +42,7 @@ public class FinalTurretClass {
 
         limelight = hwMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
+        // switch to the first pipeline
         limelight.start();
 
         telemetry.addLine("Turret Mechanism Initialized");
