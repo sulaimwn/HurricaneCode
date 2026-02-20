@@ -82,7 +82,10 @@ public class TurretOpMode extends OpMode {
         frontRightMotor.setPower(frontRightPower);
         backRightMotor.setPower(backRightPower);
         // start it up boi
+
         turret.update(true);
+
+
         telemetry.addData("P Gain", turret.getKP());
         telemetry.addData("D Gain", turret.getKD());
         telemetry.addData("Step Size", stepSizes[stepIndex]);

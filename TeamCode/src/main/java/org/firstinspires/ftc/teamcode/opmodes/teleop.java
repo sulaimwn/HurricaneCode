@@ -32,7 +32,11 @@ public class teleop extends OpMode {
     public static double hoodClosePos = 0.30;
     public static double hoodFarPos   = 0.55;
 
+    boolean gateOpen = false;
+    boolean lastY = false;
 
+    public static double gateClosedPos = 0.20;
+    public static double gateOpenPos   = 0.55;
 
     public static double P = 0 ,kV = 0,kS = 0;
     private Limelight3A limelight;
@@ -72,7 +76,7 @@ public class teleop extends OpMode {
         backLeftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        gate.setPosition(gateClosedPos);
     }
 
     @Override
@@ -100,8 +104,14 @@ public class teleop extends OpMode {
             if (farOn) closeOn = false;   // only one mode at a time
         }
         lastX = gamepad2.x;
+//Toggle gate servo
+        if (gamepad2.y && !lastY) {
+            gateOpen = !gateOpen;
+        }
+        lastY = gamepad2.y;
 
-
+// Apply position
+        gate.setPosition(gateOpen ? gateOpenPos : gateClosedPos);
 
 
         if (farOn) {
@@ -167,8 +177,8 @@ public class teleop extends OpMode {
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Flywheel
-        rightmotor = hardwareMap.get(DcMotorEx.class, "rightFlywheel");
-        leftmotor = hardwareMap.get(DcMotorEx.class, "leftFlywheel");
+        rightmotor = hardwareMap.get(DcMotorEx.class, "rightmotor");
+        leftmotor = hardwareMap.get(DcMotorEx.class, "leftmotor");
 
         // Typical mirrored flywheel setup
         leftmotor.setDirection(DcMotorSimple.Direction.REVERSE);
