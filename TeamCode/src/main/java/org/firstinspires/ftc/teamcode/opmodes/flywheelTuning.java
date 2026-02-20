@@ -9,16 +9,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @Config
 @TeleOp
 public class flywheelTuning extends OpMode {
-    private DcMotorEx flywheel1, flywheel2;
+    private DcMotorEx rightFlywheel, leftFlywheel;
     public static double targetVelocity, velocity;
     public static double P,kV,kS;
     @Override
     public void init() {
-        //TODO: Set motor name and direction
-        flywheel1 = hardwareMap.get(DcMotorEx.class, "flywheel1");
-        flywheel1.setDirection(DcMotorSimple.Direction.FORWARD);
-        flywheel2 = hardwareMap.get(DcMotorEx.class, "flywheel2");
-        flywheel2.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFlywheel = hardwareMap.get(DcMotorEx.class, "rightFlywheel");
+        rightFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFlywheel = hardwareMap.get(DcMotorEx.class, "leftFlywheel");
+        leftFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -30,7 +29,7 @@ public class flywheelTuning extends OpMode {
         double feedback = error * P;
         double feedforward = kV * targetVelocity + kS;
         double power = feedback + feedforward;
-        flywheel1.setPower(power);
-        flywheel2.setPower(power);
+        rightFlywheel.setPower(power);
+        leftFlywheel.setPower(power);
     }
 }

@@ -20,6 +20,7 @@ public class TurretOpMode extends OpMode {
 
     @Override
     public void init() {
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
         turret.init(hardwareMap, telemetry);
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
@@ -27,6 +28,8 @@ public class TurretOpMode extends OpMode {
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeft");
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        limelight.start();
+
     }
 
     @Override
@@ -57,6 +60,7 @@ public class TurretOpMode extends OpMode {
         if (gamepad1.dpad_down) {
             turret.setD(turret.getKD() - stepSizes[stepIndex]);
         }
+
 
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
