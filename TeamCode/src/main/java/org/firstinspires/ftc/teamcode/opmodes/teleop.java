@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.classes.TurretMechanism;
+
 @Config
 @TeleOp(name="Teleop")
 public class teleop extends OpMode {
@@ -17,7 +19,7 @@ public class teleop extends OpMode {
     DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, rightmotor, leftmotor, intake;
 
     Servo hood, gate;
-//    public TurretMechanism turret = new TurretMechanism();
+public TurretMechanism turret = new TurretMechanism();
 
     public static double targetVelocity, velocity;
     boolean closeOn = false;
@@ -35,15 +37,15 @@ public class teleop extends OpMode {
     boolean gateOpen = false;
     boolean lastY = false;
 
-    public static double gateClosedPos = 0.20;
-    public static double gateOpenPos   = 0.55;
+    public static double gateClosedPos = 0.15;
+    public static double gateOpenPos   = 0.03;
 
     public static double P = 0 ,kV = 0,kS = 0;
     private Limelight3A limelight;
 
     @Override
     public void init() {
-//        turret.init(hardwareMap, telemetry);
+    turret.init(hardwareMap, telemetry);
         frontLeftMotor  = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
         backLeftMotor   = hardwareMap.get(DcMotorEx.class, "backLeft");
@@ -81,7 +83,7 @@ public class teleop extends OpMode {
 
     @Override
     public void start() {
-//        turret.resetTimer();
+        turret.resetTimer();
     }
 
     @Override
@@ -129,6 +131,7 @@ public class teleop extends OpMode {
             rightmotor.setPower(0);
             leftmotor.setPower(0);
         }
+        turret.update(true);
 
 
 
@@ -141,11 +144,15 @@ public class teleop extends OpMode {
                 }
 
 
-//        turret.update(true);
+turret.update(true);
+
+
         telemetry.addData("TargetVel", targetVelocity);
         telemetry.addData("MeasuredVel", velocity);
 
         telemetry.addData("Mode", farOn ? "FAR" : closeOn ? "CLOSE" : "OFF");
+        telemetry.addData("GateOpen", gateOpen);
+
         telemetry.update();
     }
     private void driveMecanum(double y, double x, double rx) {
@@ -217,6 +224,8 @@ public class teleop extends OpMode {
 
         telemetry.addData("TargetVel", targetVelocity);
         telemetry.addData("MeasuredVel", velocity);
+
+
         telemetry.addData("Power", power);
 
     }

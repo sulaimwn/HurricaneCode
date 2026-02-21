@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.classes.TurretMechanism;
 @TeleOp(name="Tune Turret PD")
 public class TurretOpMode extends OpMode {
 
-    DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, flywheel1, flywheel2, intake;
+    DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     private TurretMechanism turret = new TurretMechanism();
     private Limelight3A limelight;
 
