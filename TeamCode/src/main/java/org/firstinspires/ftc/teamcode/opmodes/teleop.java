@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.classes.TurretMechanism;
+import org.firstinspires.ftc.teamcode.subsystems.TurretMechanism;
 
 @Config
 @TeleOp(name="Teleop")
